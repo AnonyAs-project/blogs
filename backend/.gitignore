@@ -1,0 +1,27 @@
+# Node modules
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files
+.env
+
+# OS-specific files
+.DS_Store  # macOS
+Thumbs.db  # Windows
+
+# Dependency directories
+bower_components/
+
+# Build directories
+/dist/
+/build/
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# Other
+*.tgz
