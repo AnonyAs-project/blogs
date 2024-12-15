@@ -130,10 +130,10 @@ export default function PostsComponent({ post, getAllPosts }) {
                       width: 40,
                       height: 40,
                       fontSize: "14px",
-                      bgcolor: "gray",
+                     
                     }}
                   >
-                    {comment.userId?.name[0]}
+                    {comment.userId?.name[0].toUpperCase()}
                   </Avatar>
                   <div>{comment.content}</div>
                 </div>
