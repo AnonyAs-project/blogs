@@ -1,14 +1,16 @@
 // AddPostModal.js
 import React, { useState } from "react";
+import UploadImage from "../components/UploadImages";
 
 const AddPostModal = ({ isOpen, onClose, onAddPost }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [image, setImage] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (title && content) {
-      onAddPost(title, content);
+      onAddPost(title, content, image);
       setTitle("");
       setContent("");
       onClose();
@@ -28,6 +30,7 @@ const AddPostModal = ({ isOpen, onClose, onAddPost }) => {
         <h2 className="text-2xl font-semibold mb-4 text-center">
           Add New Post
         </h2>
+        <UploadImage image={image} setImage={setImage} />
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"

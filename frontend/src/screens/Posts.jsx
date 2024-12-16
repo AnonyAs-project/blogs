@@ -32,7 +32,7 @@ export default function Posts() {
     }
   };
 
-  const addPost = async (title, content) => {
+  const addPost = async (title, content, image) => {
     try {
       const response = await fetch(`${API_URL}/posts`, {
         method: "POST",
@@ -40,7 +40,7 @@ export default function Posts() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title, content }),
+        body: JSON.stringify({ title, content, image }),
       });
       const data = await response.json();
       if (!response.ok) {
