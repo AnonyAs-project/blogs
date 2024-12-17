@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { API_URL } from "../../config";
+import Loading from "../components/Loading"
 
-const ImageUpload = ({image, setImage}) => {
+const ImageUpload = ({ imageUrl, setImageUrl }) => {
+  const token = localStorage.getItem("blogs-token");
+
   const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
+  const [image, setImage] = useState(null);
+
   const [error, setError] = useState("");
   const [signatureData, setSignatureData] = useState({
     signature: "",
@@ -14,8 +18,14 @@ const ImageUpload = ({image, setImage}) => {
   useEffect(() => {
     const fetchSignature = async () => {
       try {
-        const res = await fetch(`${API_URL}/generate-signature`);
+        const res = await fetch(`${API_URL}/generate-signature`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const data = await res.json();
+        
         setSignatureData(data);
       } catch (error) {
         console.error("Error fetching signature data", error);
@@ -30,7 +40,7 @@ const ImageUpload = ({image, setImage}) => {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
-      setError(""); // Reset error when a new file is selected
+      setError("");
     }
   };
 
@@ -41,7 +51,7 @@ const ImageUpload = ({image, setImage}) => {
     }
 
     setLoading(true);
-    setError(""); // Reset error on upload
+    setError("");
 
     const formData = new FormData();
     formData.append("file", image);
@@ -62,11 +72,13 @@ const ImageUpload = ({image, setImage}) => {
       );
 
       const data = await res.json();
+      
 
       if (data.error) {
         setError(data.error.message);
       } else {
         setImageUrl(data.secure_url);
+        setImage(null)
       }
 
       setLoading(false);
@@ -80,7 +92,7 @@ const ImageUpload = ({image, setImage}) => {
   return (
     <div className="flex flex-col items-center max-w-lg mx-auto p-6 border border-gray-300 rounded-lg bg-gray-50">
       <h2 className="text-2xl font-semibold mb-4">Post Image</h2>
-      
+
       <input
         type="file"
         onChange={handleFileChange}
@@ -112,6 +124,7 @@ const ImageUpload = ({image, setImage}) => {
           />
         </div>
       )}
+      {loading && <Loading />}
     </div>
   );
 };

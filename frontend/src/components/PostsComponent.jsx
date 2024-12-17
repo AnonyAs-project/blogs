@@ -89,6 +89,15 @@ export default function PostsComponent({ post, getAllPosts }) {
       >
         ×
       </span>
+      {post.image && (
+    <div className="w-full my-4   overflow-hidden">
+      <img
+        src={post.image}
+        alt="Post Cover"
+        className="w-[100px] m-auto object-cover transition-transform duration-500"
+      />
+    </div>
+  )}
       <div className="p-6">
         <h2 className="text-2xl font-semibold text-blue-600 mb-4">
           {post.title}

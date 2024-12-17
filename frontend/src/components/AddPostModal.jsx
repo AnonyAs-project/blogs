@@ -5,32 +5,34 @@ import UploadImage from "../components/UploadImages";
 const AddPostModal = ({ isOpen, onClose, onAddPost }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [image, setImage] = useState(null);
+  
+  const [imageUrl, setImageUrl] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (title && content) {
-      onAddPost(title, content, image);
+      onAddPost(title, content, imageUrl);
       setTitle("");
       setContent("");
+      setImageUrl("")
       onClose();
     } else {
-      alert("Please fill in both fields.");
+      alert("Please fill the fields.");
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50  flex justify-center items-center z-50">
       <div
-        className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full"
+        className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full h-[80%] overflow-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-2xl font-semibold mb-4 text-center">
           Add New Post
         </h2>
-        <UploadImage image={image} setImage={setImage} />
+        <UploadImage imageUrl={imageUrl} setImageUrl={setImageUrl} />
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"

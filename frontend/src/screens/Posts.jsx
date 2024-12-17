@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { API_URL } from "../../config";
 import PostsComponent from "../components/PostsComponent";
-import AddPostModal from "../components/AddPostModal"; // Import the modal
+import AddPostModal from "../components/AddPostModal";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
 export default function Posts() {
   const token = localStorage.getItem("blogs-token");
   const [posts, setPosts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const navigate = useNavigate()
-  const {logout} = useAuth
+  const navigate = useNavigate();
+
   const getAllPosts = async () => {
     try {
       const response = await fetch(`${API_URL}/posts`, {
@@ -20,8 +19,9 @@ export default function Posts() {
         },
       });
       const data = await response.json();
-      if(response.status === 401){
-        navigate("/login")
+      console.log(data)
+      if (response.status === 401) {
+        navigate("/login");
       }
       if (!response.ok) {
         throw new Error(data.message);
@@ -33,6 +33,7 @@ export default function Posts() {
   };
 
   const addPost = async (title, content, image) => {
+    console.log(title, content, image)
     try {
       const response = await fetch(`${API_URL}/posts`, {
         method: "POST",
@@ -54,7 +55,6 @@ export default function Posts() {
 
   useEffect(() => {
     getAllPosts();
-    
   }, []);
 
   return (
@@ -88,7 +88,6 @@ export default function Posts() {
         )}
       </div>
 
-      {/* Modal */}
       <AddPostModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

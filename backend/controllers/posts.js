@@ -3,8 +3,9 @@ const Post = require("../models/post");
 const createPost = async (req, res) => {
   try {
     const userId = req.id;
-    const { title, content } = req.body;
-    const post = new Post({ title, content, userId });
+  
+    const { title, content, image } = req.body;
+    const post = new Post({ title, content, userId, image });
     await post.save();
     res.status(201).json({ message: "Post created successfully" });
   } catch (err) {
@@ -16,18 +17,17 @@ const createPost = async (req, res) => {
 const getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find().populate("userId");
-    
+
     if (posts.length === 0) {
       return res.status(200).json({ message: "No posts found", posts: [] });
     }
-    
+
     res.status(200).json({ posts });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error getting all posts" });
   }
 };
-
 
 const getPost = async (req, res) => {
   const postId = req.params.id;
