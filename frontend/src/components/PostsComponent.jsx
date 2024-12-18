@@ -1,16 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { API_URL } from "../../config";
-import Avatar from "@mui/material/Avatar";
-import { blue } from "@mui/material/colors";
-import randomColor from 'randomcolor'; 
+// import Avatar from "@mui/material/Avatar";
+import Avatar from "react-avatar";
+import randomColor from "randomcolor";
 export default function PostsComponent({ post, getAllPosts }) {
   const token = localStorage.getItem("blogs-token");
 
   const [showComments, setIsShowComments] = useState(false);
   const [comments, setComments] = useState({});
   const [comment, setComment] = useState("");
-
-
 
   const getPostComments = async (postId) => {
     try {
@@ -84,21 +82,29 @@ export default function PostsComponent({ post, getAllPosts }) {
       className="relative bg-white rounded-lg shadow-lg mt-4 overflow-hidden hover:shadow-2xl transition-shadow duration-300"
     >
       <span
-        className="absolute top-4 right-4 text-red-500 text-xl cursor-pointer"
+        className="absolute top-1 right-4 text-red-500 text-xl cursor-pointer"
         onClick={() => handleDeletePost(post._id)}
       >
         ×
       </span>
       {post.image && (
-    <div className="w-full my-4   overflow-hidden">
-      <img
-        src={post.image}
-        alt="Post Cover"
-        className="w-[100px] m-auto object-cover transition-transform duration-500"
-      />
-    </div>
-  )}
+        <div className="w-full my-4    overflow-hidden">
+          <img
+            src={post.image}
+            alt="Post Cover"
+            className=" m-auto object-cover  rounded-md max-h-[400px] transition-transform duration-500"
+          />
+        </div>
+      )}
       <div className="p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Avatar
+            name={post.userId?.name || "Anonymous"}
+            size="40"
+            round={true}
+          />
+          <span className="font-semibold">{post.userId?.name}</span>
+        </div>
         <h2 className="text-2xl font-semibold text-blue-600 mb-4">
           {post.title}
         </h2>
@@ -128,27 +134,35 @@ export default function PostsComponent({ post, getAllPosts }) {
         {showComments && (
           <div className="py-4 mt-10">
             {comments && comments.length > 0 ? (
-              comments.map((comment) => (
-                <div
-                  key={comment._id}
-                  className="flex gap-2 items-center flex-wrap border-t py-4"
-                >
-                
-                  <Avatar
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      fontSize: "14px",
-                     
-                    }}
+              <div className="space-y-4">
+                {comments.map((comment) => (
+                  <div
+                    key={comment._id}
+                    className="flex items-start gap-3 bg-gray-50 p-4 rounded-lg shadow-sm"
                   >
-                    {comment.userId?.name[0].toUpperCase()}
-                  </Avatar>
-                  <div>{comment.content}</div>
-                </div>
-              ))
+                    <Avatar
+                      name={comment.userId?.name || "Anonymous"}
+                      size="40"
+                      round={true}
+                    />
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center">
+                        <span className="font-semibold text-gray-800">
+                          {comment.userId?.name || "Anonymous"}
+                        </span>
+                        <span className="text-sm text-gray-500">
+                          {new Date(comment.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+                      <p className="text-gray-700 mt-1">{comment.content}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : (
-              <p className="text-gray-500">No comments yet.</p>
+              <p className="text-gray-500 text-center">
+                No comments yet. Be the first to comment!
+              </p>
             )}
           </div>
         )}
