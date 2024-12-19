@@ -2,6 +2,9 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+const mailgun = require("mailgun-js");
+const mg = mailgun({ apiKey: "YOUR_API_KEY", domain: "YOUR_DOMAIN" });
+
 const createUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -20,6 +23,23 @@ const createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ name, email, password: hashedPassword });
     await user.save();
+
+    const emailData = {
+      from: "you@yourdomain.com",
+      to: email,
+      subject: "Welcome to Our Platform!",
+      text: `Hello ${name},\n\nWelcome to our platform. Your account has been successfully created.\n\nBest regards,\nTeam`,
+    };
+
+    mg.messages
+      .create("sandbox000a284d960c46e2874d5c3577cd6331.mailgun.org", emailData)
+
+      .then((response) => {
+        console.log("Email sent successfully:", response);
+      })
+      .catch((error) => {
+        console.error("Error sending email:", error);
+      });
 
     const token = jwt.sign({ id: user._id }, process.env.SECRET);
     res.status(201).json({
