@@ -1,14 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { API_URL } from "../../config";
+
 // import Avatar from "@mui/material/Avatar";
 import Avatar from "react-avatar";
 import randomColor from "randomcolor";
-export default function PostsComponent({ post, getAllPosts }) {
+export default function PostsComponent({ post, getAllPosts, userId }) {
   const token = localStorage.getItem("blogs-token");
-
   const [showComments, setIsShowComments] = useState(false);
-  const [comments, setComments] = useState({});
+  const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
+
+  
+  // useEffect(() => {
+  //   const handleNewComment = (data) => {
+  //       // Add the new comment to the comments state
+  //       setComments((prev) => [...prev, data.comment]);
+  //       console.log("New comment notification received:", data);
+  //       // getPostComments(post._id);
+
+  //   };
+
+  //   // Set up the socket listener
+  //   socket.on("newComment", handleNewComment);
+
+  //   return () => {
+  //     // Clean up the specific listener
+  //     socket.off("newComment", handleNewComment);
+  //   };
+  // }, [socket, post._id]); // Depend on `socket` and `post._id`
 
   const getPostComments = async (postId) => {
     try {
@@ -81,12 +100,27 @@ export default function PostsComponent({ post, getAllPosts }) {
       key={post._id}
       className="relative bg-white rounded-lg shadow-lg mt-4 overflow-hidden hover:shadow-2xl transition-shadow duration-300"
     >
-      <span
-        className="absolute top-1 right-4 text-red-500 text-xl cursor-pointer"
-        onClick={() => handleDeletePost(post._id)}
-      >
-        ×
-      </span>
+      {post.userId._id === userId && (
+        <span
+          className="absolute top-1 right-4 text-red-500 text-xl cursor-pointer"
+          onClick={() => handleDeletePost(post._id)}
+        >
+          ×
+        </span>
+      )}
+      <div className="p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Avatar
+            name={post.userId?.name || "Anonymous"}
+            size="40"
+            round={true}
+          />
+          <div className="flex flex-col">
+            <span className="font-semibold">{post.userId?.name}</span>
+            <span>{post.createdAt && new Date(post.createdAt).toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
       {post.image && (
         <div className="w-full my-4    overflow-hidden">
           <img
@@ -97,14 +131,6 @@ export default function PostsComponent({ post, getAllPosts }) {
         </div>
       )}
       <div className="p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <Avatar
-            name={post.userId?.name || "Anonymous"}
-            size="40"
-            round={true}
-          />
-          <span className="font-semibold">{post.userId?.name}</span>
-        </div>
         <h2 className="text-2xl font-semibold text-blue-600 mb-4">
           {post.title}
         </h2>

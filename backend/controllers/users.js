@@ -1,9 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
-const mailgun = require("mailgun-js");
-const mg = mailgun({ apiKey: "YOUR_API_KEY", domain: "YOUR_DOMAIN" });
+const nodemailer = require('nodemailer'); 
 
 const createUser = async (req, res) => {
   try {
@@ -20,26 +18,36 @@ const createUser = async (req, res) => {
         .status(400)
         .json({ message: "User with this email already exists" });
     }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ name, email, password: hashedPassword });
     await user.save();
+    // const transporter = nodemailer.createTransport({
+    //   service: "gmail",
+    //   auth: {
+    //     user: process.env.EMAIL,
+    //     pass: process.env.EMAIL_PASSWORD,
+    //   },
+    //   tls: {
+    //     rejectUnauthorized: false, // Can help if there are issues with SSL certificates
+    //   },
+    // });
+    // // Setup email data
+    // const emailData = {
+    //   from: process.env.EMAIL, // Sender's email
+    //   to: "princeprincess1222@gmail.com", 
+    //   subject: "Welcome to Our Platform!",
+    //   text: `Hello ${name},\n\nWelcome to our platform. Your account has been successfully created.\n\nBest regards,\nTeam`,
+    // };
 
-    const emailData = {
-      from: "you@yourdomain.com",
-      to: email,
-      subject: "Welcome to Our Platform!",
-      text: `Hello ${name},\n\nWelcome to our platform. Your account has been successfully created.\n\nBest regards,\nTeam`,
-    };
-
-    mg.messages
-      .create("sandbox000a284d960c46e2874d5c3577cd6331.mailgun.org", emailData)
-
-      .then((response) => {
-        console.log("Email sent successfully:", response);
-      })
-      .catch((error) => {
-        console.error("Error sending email:", error);
-      });
+    // // Send the email
+    // transporter.sendMail(emailData, (error, info) => {
+    //   if (error) {
+    //     console.error("Error sending email:", error);
+    //   } else {
+    //     console.log("Email sent successfully:", info.response);
+    //   }
+    // });
 
     const token = jwt.sign({ id: user._id }, process.env.SECRET);
     res.status(201).json({
@@ -109,7 +117,7 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid password" });
     }
     const token = jwt.sign(
-      { _id: user._id, email: user.email },
+      { id: user._id, email: user.email },
       process.env.SECRET
     );
 
