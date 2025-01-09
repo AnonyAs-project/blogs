@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { API_URL } from "../../config";
-
-// import Avatar from "@mui/material/Avatar";
 import Avatar from "react-avatar";
-import randomColor from "randomcolor";
 export default function PostsComponent({ post, getAllPosts, userId }) {
   const token = localStorage.getItem("blogs-token");
   const [showComments, setIsShowComments] = useState(false);
