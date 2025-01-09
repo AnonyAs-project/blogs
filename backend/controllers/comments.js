@@ -16,13 +16,24 @@ const getAllComments = async (req, res) => {
 const getPostComments = async (req, res) => {
   const postId = req.params.id;
 
+  const page = parseInt(req.query.page) || 1;
+  const limit = 2;
+
   if (!mongoose.Types.ObjectId.isValid(postId)) {
     return res.status(400).json({ message: "Invalid postId format" });
   }
 
   try {
-    const comments = await Comment.find({ postId }).populate("userId");
-    res.status(200).json({ comments });
+    const comments = await Comment.find({ postId })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .populate("userId");
+    const totalComments = await Comment.countDocuments({ postId });
+    const totalPages = Math.ceil(totalComments / limit);
+
+    res
+      .status(200)
+      .json({ comments, currentPage: page, totalComments, totalPages });
   } catch (err) {
     console.error("Error fetching comments:", err);
     res.status(500).json({ message: "Error getting comments for post" });

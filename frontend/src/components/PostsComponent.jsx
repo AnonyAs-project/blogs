@@ -9,8 +9,10 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
   const [showComments, setIsShowComments] = useState(false);
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(null); // try the pull request then maybe live comments .. and we need to complete browser notifications
+  const [isLoading, setIsLoading] = useState(false);
 
-  
   // useEffect(() => {
   //   const handleNewComment = (data) => {
   //       // Add the new comment to the comments state
@@ -31,24 +33,33 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
 
   const getPostComments = async (postId) => {
     try {
-      const response = await fetch(`${API_URL}/comments/${postId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      setIsLoading(true);
+      const response = await fetch(
+        `${API_URL}/comments/${postId}?page=${currentPage}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message);
       }
-      setComments(data.comments);
+      setComments((prevComments) => [...prevComments, ...data.comments]);
+      setTotalPages(data.totalPages);
+      setCurrentPage((prev) => prev + 1);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const sendMessage = async (postId, message) => {
     try {
+      setIsLoading(true);
       const response = await fetch(`${API_URL}/comments`, {
         method: "POST",
         headers: {
@@ -68,16 +79,24 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
       getPostComments(postId);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleShowComments = (postId) => {
     setIsShowComments((prev) => !prev);
-    getPostComments(postId);
+
+    if (!showComments) {
+      setComments([]);
+      setCurrentPage(1);
+      getPostComments(postId);
+    }
   };
 
   const handleDeletePost = async (postId) => {
     try {
+      setIsLoading(true);
       const response = await fetch(`${API_URL}/posts/${postId}`, {
         method: "DELETE",
         headers: {
@@ -92,6 +111,13 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
       getAllPosts();
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleViewMore = (postId) => {
+    if (!isLoading && currentPage < totalPages) {
+      getPostComments(postId);
     }
   };
 
@@ -117,7 +143,9 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
           />
           <div className="flex flex-col">
             <span className="font-semibold">{post.userId?.name}</span>
-            <span>{post.createdAt && new Date(post.createdAt).toLocaleString()}</span>
+            <span>
+              {post.createdAt && new Date(post.createdAt).toLocaleString()}
+            </span>
           </div>
         </div>
       </div>
@@ -189,6 +217,14 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
               <p className="text-gray-500 text-center">
                 No comments yet. Be the first to comment!
               </p>
+            )}
+            {totalPages > currentPage && (
+              <div
+                className="mt-4 text-center text-blue-500 cursor-pointer hover:underline"
+                onClick={() => handleViewMore(post._id)}
+              >
+                {isLoading ? "Loading..." : "View More"}
+              </div>
             )}
           </div>
         )}

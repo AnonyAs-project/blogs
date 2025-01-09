@@ -79,8 +79,6 @@ const updatePost = async (req, res) => {
 
 const deletePost = async (req, res) => {
   const postId = req.params.id;
-
-  // test deleting a post willl delete with it the notiifcations or not .. => soft delete
   try {
     const post = await Post.findOneAndDelete({ _id: postId, userId: req.id });
     if (post) {

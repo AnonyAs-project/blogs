@@ -4,11 +4,14 @@ const getUserNotifications = async (req, res) => {
   try {
     const userId = req.id;
     console.log("userId", userId);
-    const notifications = await Notification.find({ receiver: userId })
-      .populate("sender") // Filter notifications by userId
-      .sort({ createdAt: -1 }); // Sort notifications by createdAt in descending order
+    const notifications = await Notification.find({
+      receiver: userId,
+      deleted: { $ne: true },
+    })
+      .populate("sender")
+      .sort({ createdAt: -1 });
 
-    res.status(200).json({ notifications }); // Return the notifications
+    res.status(200).json({ notifications });
   } catch (err) {
     console.error(err); // Log any errors
     res.status(500).json({ message: "Error getting notifications" });
@@ -33,11 +36,9 @@ const updateNotification = async (req, res) => {
     }
 
     if (notification.receiver.toString() !== req.id) {
-      return res
-        .status(403)
-        .json({
-          message: "You are not authorized to update this notification.",
-        });
+      return res.status(403).json({
+        message: "You are not authorized to update this notification.",
+      });
     }
 
     notification.read = read !== undefined ? read : notification.read;
@@ -55,5 +56,5 @@ const updateNotification = async (req, res) => {
 
 module.exports = {
   getUserNotifications,
-  updateNotification
+  updateNotification,
 };

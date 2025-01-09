@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import socket from "../services/socketClient";
 import { FaRegBell } from "react-icons/fa";
 import { API_URL } from "../../config";
-
+ 
 const Navbar = () => {
   const token = localStorage.getItem("blogs-token");
   const navigate = useNavigate();
@@ -39,6 +39,29 @@ const Navbar = () => {
         ...prevNotifications,
         newNotification,
       ]);
+
+      //   if ("Notification" in window && Notification.permission === "granted") {
+      //     const options = {
+      //       body: newNotification.message,
+      //       icon: "/frontend/src/assets/blogsImg.jpg.webp",
+      //     };
+
+      //     const notification = new Notification(newNotification.sender?.name, options);
+
+      //     notification.onclick = () => {
+      //       window.focus();
+      //     };
+      //   }
+      // };
+
+      // if ("Notification" in window) {
+      //   Notification.requestPermission().then((permission) => {
+      //     if (permission === "granted") {
+      //       console.log("Notification permission granted.");
+      //     } else {
+      //       console.log("Notification permission denied.");
+      //     }
+      //   });
     };
 
     socket.on("newNotification", handleNewNotification);
@@ -53,6 +76,7 @@ const Navbar = () => {
     socket.disconnect();
     navigate("/login");
   };
+  console.log(notifications);
 
   const handleReadNotification = async (notification) => {
     try {
@@ -105,37 +129,43 @@ const Navbar = () => {
         </div>
 
         {/* Notifications Dropdown */}
-        {isNotificationsOpen && notifications?.length > 0 && (
-          <div className="absolute z-[500] mt-2 top-12 left-0 bg-white w-[350px] max-h-72 rounded-lg shadow-xl overflow-y-auto border border-gray-300">
+        {isNotificationsOpen && (
+          <div className="absolute z-[500] mt-2 top-12 left-0 bg-white w-[100%] md:w-[35%] max-h-72 rounded-lg shadow-xl overflow-y-auto border border-gray-300">
             <div className="py-2">
-              {notifications?.map((notification) => (
-                <div
-                  key={notification._id}
-                  className={`relative p-4 border-b border-gray-200 rounded-lg transition-all ease-in-out duration-200 my-2 cursor-pointer ${
-                    notification.read ? "bg-gray-100" : "bg-red-100"
-                  }`}
-                  onClick={() => handleReadNotification(notification)}
-                >
-                  <div className="flex justify-between items-center mb-2">
-                    <strong className="text-sm text-gray-700">
-                      {notification.sender?.name}
-                    </strong>
-                    <span className="text-xs text-gray-500">
-                      {new Date(notification.createdAt).toLocaleString()}
-                    </span>
+              {notifications?.length > 0 ? (
+                notifications?.map((notification) => (
+                  <div
+                    key={notification._id}
+                    className={`relative p-4 border-b border-gray-200 rounded-lg transition-all ease-in-out duration-200 my-2 cursor-pointer ${
+                      notification.read ? "bg-gray-100" : "bg-red-100"
+                    }`}
+                    onClick={() => handleReadNotification(notification)}
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <strong className="text-sm text-gray-700">
+                        {notification.sender?.name}
+                      </strong>
+                      <span className="text-xs text-gray-500">
+                        {new Date(notification.createdAt).toLocaleString()}
+                      </span>
+                    </div>
+                    {console.log(notification)}
+                    <div className="text-sm text-gray-700">
+                      commented on your post:{" "}
+                      <Link
+                        to={`#${notification.postId}`}
+                        className="text-blue-600 hover:underline"
+                      >
+                        Link
+                      </Link>
+                    </div>
                   </div>
-                  {console.log(notification)}
-                  <div className="text-sm text-gray-700">
-                    commented on your post:{" "}
-                    <Link
-                      to={`#${notification.postId}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Link
-                    </Link>
-                  </div>
+                ))
+              ) : (
+                <div className="flex justify-center items-center p-6 bg-gray-100 rounded-lg shadow-md text-gray-600 text-lg font-medium">
+                  No Notifications
                 </div>
-              ))}
+              )}
             </div>
           </div>
         )}
