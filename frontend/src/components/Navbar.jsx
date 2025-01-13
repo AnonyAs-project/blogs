@@ -5,7 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import socket from "../services/socketClient";
 import { FaRegBell } from "react-icons/fa";
 import { API_URL } from "../../config";
- 
+import blogImg from "../assets/blogsImg.jpg.webp"
+
 const Navbar = () => {
   const token = localStorage.getItem("blogs-token");
   const navigate = useNavigate();
@@ -33,35 +34,42 @@ const Navbar = () => {
   useEffect(() => {
     fetchNotifications();
 
-    // Handle live notifications via WebSocket
+    if (Notification.permission === "default") {
+      console.log(Notification.permission === "default")
+      Notification.requestPermission()
+        .then((permission) => {
+          if (permission === "granted") {
+            console.log("User allowed notifications.");
+          } else {
+            console.log("User denied notifications.");
+          }
+        })
+        .catch((error) => {
+          console.error("Notification permission request failed:", error);
+        });
+    }
+
     const handleNewNotification = (newNotification) => {
       setNotifications((prevNotifications) => [
         ...prevNotifications,
         newNotification,
       ]);
 
-      //   if ("Notification" in window && Notification.permission === "granted") {
-      //     const options = {
-      //       body: newNotification.message,
-      //       icon: "/frontend/src/assets/blogsImg.jpg.webp",
-      //     };
+      if ("Notification" in window && Notification.permission === "granted") {
+        const options = {
+          body: newNotification.message,
+          icon: blogImg
+        };
 
-      //     const notification = new Notification(newNotification.sender?.name, options);
+        const notification = new Notification(
+          newNotification.sender?.name || "New Notification",
+          options
+        );
 
-      //     notification.onclick = () => {
-      //       window.focus();
-      //     };
-      //   }
-      // };
-
-      // if ("Notification" in window) {
-      //   Notification.requestPermission().then((permission) => {
-      //     if (permission === "granted") {
-      //       console.log("Notification permission granted.");
-      //     } else {
-      //       console.log("Notification permission denied.");
-      //     }
-      //   });
+        notification.onclick = () => {
+          window.focus();
+        };
+      }
     };
 
     socket.on("newNotification", handleNewNotification);
@@ -69,7 +77,7 @@ const Navbar = () => {
     return () => {
       socket.off("newNotification", handleNewNotification);
     };
-  }, [token]);
+  }, []);
 
   const handleLogout = () => {
     logout();

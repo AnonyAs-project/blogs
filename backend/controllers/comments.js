@@ -2,6 +2,7 @@ const Comment = require("../models/comment");
 const Post = require("../models/post");
 const mongoose = require("mongoose");
 const Notification = require("../models/notifications");
+const User = require("../models/user");
 
 const getAllComments = async (req, res) => {
   try {
@@ -44,19 +45,32 @@ const createComment = async (req, res) => {
   try {
     const userId = req.id;
     const { content, postId } = req.body;
-    const comment = new Comment({ userId: userId, content, postId });
+
+    if (!content || !postId) {
+      return res.status(400).json({ message: "Content and postId are required." });
+    }
+
+    const comment = new Comment({ userId, content, postId });
     await comment.save();
 
     const post = await Post.findById(postId).populate("userId");
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
+
     const postOwnerId = post.userId._id.toString();
+
     if (postOwnerId !== userId) {
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
       const notification = new Notification({
-        sender: userId,
+        sender: user,
         receiver: postOwnerId,
-        message: `${userId} has commented on your post.`,
+        message: `${user.name} has commented on your post.`,
         postId: post._id,
       });
       await notification.save();
@@ -66,17 +80,18 @@ const createComment = async (req, res) => {
       console.log(`Emitting "newNotification" to post owner ${postOwnerId}`);
     }
 
-    res.status(201).json({ message: "Comment created successfully" });
+    res.status(201).json({ message: "Comment created successfully", comment });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error creating comment" });
   }
 };
 
+
 const deleteComment = async (req, res) => {
   try {
     const commentId = req.params.id;
-
+ 
     const comment = await Comment.findOneAndDelete({
       _id: commentId,
       userId: req.id,

@@ -7,7 +7,8 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(null); // try the pull request then maybe live comments .. and we need to complete browser notifications
+  const [totalPages, setTotalPages] = useState(null); // try the pull request then maybe live comments .
+  // and also change the ui of the blogs
   const [isLoading, setIsLoading] = useState(false);
 
   // useEffect(() => {
@@ -26,7 +27,7 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
   //     // Clean up the specific listener
   //     socket.off("newComment", handleNewComment);
   //   };
-  // }, [socket, post._id]); // Depend on `socket` and `post._id`
+  // }, [socket, post._id]);
 
   const getPostComments = async (postId) => {
     try {
