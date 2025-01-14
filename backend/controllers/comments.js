@@ -77,7 +77,6 @@ const createComment = async (req, res) => {
 
       req.io.to(postOwnerId).emit("newNotification", notification);
 
-      console.log(`Emitting "newNotification" to post owner ${postOwnerId}`);
     }
 
     res.status(201).json({ message: "Comment created successfully", comment });

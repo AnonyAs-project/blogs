@@ -3,7 +3,6 @@ const Notification = require("../models/notifications");
 const getUserNotifications = async (req, res) => {
   try {
     const userId = req.id;
-    console.log("userId", userId);
     const notifications = await Notification.find({
       receiver: userId,
       deleted: { $ne: true },

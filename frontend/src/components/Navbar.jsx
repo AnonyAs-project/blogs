@@ -84,7 +84,6 @@ const Navbar = () => {
     socket.disconnect();
     navigate("/login");
   };
-  console.log(notifications);
 
   const handleReadNotification = async (notification) => {
     try {
@@ -104,7 +103,7 @@ const Navbar = () => {
         throw new Error(data.message);
       }
       fetchNotifications();
-      console.log(data);
+   
     } catch (err) {
       console.error("Error read notifications:", err);
     }
@@ -157,7 +156,7 @@ const Navbar = () => {
                         {new Date(notification.createdAt).toLocaleString()}
                       </span>
                     </div>
-                    {console.log(notification)}
+                   
                     <div className="text-sm text-gray-700">
                       commented on your post:{" "}
                       <Link

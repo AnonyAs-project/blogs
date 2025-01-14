@@ -1,13 +1,14 @@
-import {  useState } from "react";
+import { useEffect, useState } from "react";
 import { API_URL } from "../../config";
 import Avatar from "react-avatar";
+import Loading from "./Loading";
 export default function PostsComponent({ post, getAllPosts, userId }) {
   const token = localStorage.getItem("blogs-token");
   const [showComments, setIsShowComments] = useState(false);
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(null); // try the pull request then maybe live comments .
+  const [totalPages, setTotalPages] = useState(null); // then maybe live comments .
   // and also change the ui of the blogs
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,6 +30,8 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
   //   };
   // }, [socket, post._id]);
 
+  console.log(comments);
+
   const getPostComments = async (postId) => {
     try {
       setIsLoading(true);
@@ -47,7 +50,6 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
       }
       setComments((prevComments) => [...prevComments, ...data.comments]);
       setTotalPages(data.totalPages);
-      setCurrentPage((prev) => prev + 1);
     } catch (err) {
       console.error(err);
     } finally {
@@ -56,6 +58,7 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
   };
 
   const sendMessage = async (postId, message) => {
+    if (!message.trim()) return;
     try {
       setIsLoading(true);
       const response = await fetch(`${API_URL}/comments`, {
@@ -83,13 +86,12 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
   };
 
   const handleShowComments = (postId) => {
-    setIsShowComments((prev) => !prev);
-
-    if (!showComments) {
+    if (!showComments && comments.length === 0) {
       setComments([]);
       setCurrentPage(1);
       getPostComments(postId);
     }
+    setIsShowComments((prev) => !prev);
   };
 
   const handleDeletePost = async (postId) => {
@@ -113,17 +115,21 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
       setIsLoading(false);
     }
   };
-  const handleViewMore = (postId) => {
+  const handleViewMore = () => {
     if (!isLoading && currentPage < totalPages) {
-      getPostComments(postId);
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
+  useEffect(() => {
+    if (currentPage > 1) {
+      getPostComments(post._id);
+    }
+  }, [currentPage]);
+
   return (
-    <div
-      key={post._id}
-      className="relative bg-white rounded-lg shadow-lg mt-4 overflow-hidden hover:shadow-2xl transition-shadow duration-300"
-    >
+    <div className="relative bg-white rounded-lg shadow-lg mt-4 overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+      {isLoading && <Loading />}
       {post.userId._id === userId && (
         <span
           className="absolute top-1 right-4 text-red-500 text-xl cursor-pointer"
@@ -216,10 +222,10 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
                 No comments yet. Be the first to comment!
               </p>
             )}
-            {totalPages > currentPage && (
+            {totalPages > currentPage && !isLoading && (
               <div
                 className="mt-4 text-center text-blue-500 cursor-pointer hover:underline"
-                onClick={() => handleViewMore(post._id)}
+                onClick={() => handleViewMore()}
               >
                 {isLoading ? "Loading..." : "View More"}
               </div>
