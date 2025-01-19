@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { API_URL } from "../../config";
 import Avatar from "react-avatar";
+import socket from "../services/socketClient";
+
 import Loading from "./Loading";
 export default function PostsComponent({ post, getAllPosts, userId }) {
   const token = localStorage.getItem("blogs-token");
@@ -9,26 +11,26 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
   const [comment, setComment] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(null); // then maybe live comments .
-  // and also change the ui of the blogs
+  // and also change the ui of the blogs ... update login and signup with our logo
   const [isLoading, setIsLoading] = useState(false);
 
-  // useEffect(() => {
-  //   const handleNewComment = (data) => {
-  //       // Add the new comment to the comments state
-  //       setComments((prev) => [...prev, data.comment]);
-  //       console.log("New comment notification received:", data);
-  //       // getPostComments(post._id);
+  useEffect(() => {
+    const handleNewComment = (data) => {
+      setComments((prev) => {
+        if (prev.some((c) => c._id === data.comment._id)) {
+          return prev;
+        }
+        return [...prev, data.comment];
+      });
+      console.log("New comment notification received:", data);
+    };
 
-  //   };
+    socket.on("newComment", handleNewComment);
 
-  //   // Set up the socket listener
-  //   socket.on("newComment", handleNewComment);
-
-  //   return () => {
-  //     // Clean up the specific listener
-  //     socket.off("newComment", handleNewComment);
-  //   };
-  // }, [socket, post._id]);
+    return () => {
+      socket.off("newComment", handleNewComment);
+    };
+  }, [socket, post._id]);
 
   console.log(comments);
 
@@ -48,7 +50,13 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
       if (!response.ok) {
         throw new Error(data.message);
       }
-      setComments((prevComments) => [...prevComments, ...data.comments]);
+      setComments((prevComments) => {
+        const existingIds = new Set(prevComments.map((c) => c._id));
+        const uniqueComments = data.comments.filter(
+          (c) => !existingIds.has(c._id)
+        );
+        return [...prevComments, ...uniqueComments];
+      });
       setTotalPages(data.totalPages);
     } catch (err) {
       console.error(err);
@@ -77,7 +85,7 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
         throw new Error(data.message);
       }
       setComment("");
-      getPostComments(postId);
+      // getPostComments(postId);
     } catch (err) {
       console.error(err);
     } finally {

@@ -17,13 +17,22 @@ const createPost = async (req, res) => {
 
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find().populate("userId");
+    const { page, postsLimit } = req.query;
+    const limit = postsLimit || 3;
+
+    const posts = await Post.find()
+      .populate("userId")
+      .skip((page - 1) * limit)
+      .limit(limit);
 
     if (posts.length === 0) {
       return res.status(200).json({ message: "No posts found", posts: [] });
     }
 
-    res.status(200).json({ posts });
+    const totalPosts = await Post.countDocuments();
+    const totalPages = Math.ceil(totalPosts / limit);
+
+    res.status(200).json({ posts, totalPosts, totalPages });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error getting all posts" });
@@ -83,8 +92,8 @@ const deletePost = async (req, res) => {
     const post = await Post.findOneAndDelete({ _id: postId, userId: req.id });
     if (post) {
       await Notification.updateMany(
-        { postId: postId }, 
-        { $set: { deleted: true } } 
+        { postId: postId },
+        { $set: { deleted: true } }
       );
       return res.status(200).json({ message: "Post deleted successfully" });
     } else {

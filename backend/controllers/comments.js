@@ -26,6 +26,7 @@ const getPostComments = async (req, res) => {
 
   try {
     const comments = await Comment.find({ postId })
+      .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
       .populate("userId");
@@ -42,27 +43,35 @@ const getPostComments = async (req, res) => {
 };
 
 const createComment = async (req, res) => {
+  const userId = req.id;
+  const { content, postId } = req.body;
+
+  if (!content || !postId) {
+    return res
+      .status(400)
+      .json({ message: "Content and postId are required." });
+  }
+
   try {
-    const userId = req.id;
-    const { content, postId } = req.body;
-
-    if (!content || !postId) {
-      return res.status(400).json({ message: "Content and postId are required." });
-    }
-
-    const comment = new Comment({ userId, content, postId });
-    await comment.save();
-
     const post = await Post.findById(postId).populate("userId");
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
+    const comment = new Comment({ userId, content, postId });
+    await comment.save();
+    await comment.populate("userId"); 
+
     const postOwnerId = post.userId._id.toString();
+
+    req.io.to(postOwnerId).emit("newComment", {
+      comment,
+      message: "A new comment has been added.",
+    });
+
 
     if (postOwnerId !== userId) {
       const user = await User.findById(userId);
-
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -76,7 +85,6 @@ const createComment = async (req, res) => {
       await notification.save();
 
       req.io.to(postOwnerId).emit("newNotification", notification);
-
     }
 
     res.status(201).json({ message: "Comment created successfully", comment });
@@ -86,11 +94,10 @@ const createComment = async (req, res) => {
   }
 };
 
-
 const deleteComment = async (req, res) => {
   try {
     const commentId = req.params.id;
- 
+
     const comment = await Comment.findOneAndDelete({
       _id: commentId,
       userId: req.id,
