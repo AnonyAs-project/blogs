@@ -10,8 +10,8 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(null); // then maybe live comments .
-  // and also change the ui of the blogs ... update login and signup with our logo
+  const [totalPages, setTotalPages] = useState(null);
+  // and also change the ui of the blogs
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {

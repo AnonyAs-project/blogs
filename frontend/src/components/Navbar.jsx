@@ -120,7 +120,7 @@ const Navbar = () => {
         >
           <Link to="/">
             <div className="flex items-center space-x-2">
-              <FaBlog className="text-white text-2xl" />
+              <img src={blogImg} alt="logo" className="w-[40px] rounded-full" />
               <span className="text-white text-xl font-semibold">My Blog</span>
             </div>
           </Link>
