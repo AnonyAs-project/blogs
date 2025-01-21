@@ -89,58 +89,72 @@ export default function Posts() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 p-8">
-      <h1 className="text-4xl font-extrabold text-blue-600 text-center mb-16">
-        Explore Our Posts 
-      </h1> 
-      <div className="text-center">
-        <button
-          className="bg-blue-600 text-white py-2 px-4 rounded-lg mb-6"
-          onClick={() => setIsModalOpen(true)}
-        >
-          Add Post
-        </button>
+    <>
+      <div
+        className="h-[calc(100vh-64px)]  w-full"
+        style={{
+          backgroundImage:
+            "url(https://cdn.pixabay.com/photo/2015/10/02/15/00/diary-968592_640.jpg)",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+        }}
+      >
+        <div className="absolute top-[64px] left-0 w-full h-[calc(100vh-64px)] bg-black bg-opacity-50"></div>
+        {/* contiune this section and change the ui of the site */}
       </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 p-8">
+        <h1 className="text-4xl font-extrabold text-blue-600 text-center mb-16">
+          Explore Our Posts
+        </h1>
+        <div className="text-center">
+          <button
+            className="bg-blue-600 text-white py-2 px-4 rounded-lg mb-6"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Add Post
+          </button>
+        </div>
 
-      <div className="md:w-[60%] m-auto">
-        {posts.length > 0 ? (
-          posts.map((post) => (
-            <PostsComponent
-              key={post?._id}
-              post={post}
-              getAllPosts={() => getAllPosts(currentPage)}
-              userId={userId}
-            />
-          ))
-        ) : (
-          <p className="text-gray-500 text-center col-span-full">
-            No posts available.
-          </p>
-        )}
+        <div className="md:w-[60%] m-auto">
+          {posts.length > 0 ? (
+            posts.map((post) => (
+              <PostsComponent
+                key={post?._id}
+                post={post}
+                getAllPosts={() => getAllPosts(currentPage)}
+                userId={userId}
+              />
+            ))
+          ) : (
+            <p className="text-gray-500 text-center col-span-full">
+              No posts available.
+            </p>
+          )}
 
-        <ReactPaginate
-          breakLabel="..."
-          nextLabel="Next >"
-          onPageChange={handlePageClick}
-          pageCount={totalPages}
-          previousLabel="< Previous"
-          containerClassName="flex justify-between items-center w-full mx-auto mt-6 px-4"
-          pageClassName="cursor-pointer px-3 py-1 border rounded-md"
-          activeClassName="font-bold bg-blue-500 text-white border-blue-500"
-          previousClassName="cursor-pointer px-3 py-1 border rounded-md bg-gray-100"
-          nextClassName="cursor-pointer px-3 py-1 border rounded-md bg-gray-100"
-          disabledClassName="opacity-50 cursor-not-allowed"
-          pageRangeDisplayed={2}
-          marginPagesDisplayed={2}
-          renderOnZeroPageCount={null}
+          <ReactPaginate
+            breakLabel="..."
+            nextLabel="Next >"
+            onPageChange={handlePageClick}
+            pageCount={totalPages}
+            previousLabel="< Previous"
+            containerClassName="flex justify-between items-center w-full mx-auto mt-6 px-4"
+            pageClassName="cursor-pointer px-3 py-1 border rounded-md"
+            activeClassName="font-bold bg-blue-500 text-white border-blue-500"
+            previousClassName="cursor-pointer px-3 py-1 border rounded-md bg-gray-100"
+            nextClassName="cursor-pointer px-3 py-1 border rounded-md bg-gray-100"
+            disabledClassName="opacity-50 cursor-not-allowed"
+            pageRangeDisplayed={2}
+            marginPagesDisplayed={2}
+            renderOnZeroPageCount={null}
+          />
+        </div>
+
+        <AddPostModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onAddPost={addPost}
         />
       </div>
-
-      <AddPostModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAddPost={addPost}
-      />
-    </div>
+    </>
   );
 }
