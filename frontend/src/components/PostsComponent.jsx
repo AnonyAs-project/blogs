@@ -135,111 +135,112 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
   }, [currentPage]);
 
   return (
-    <div className="relative bg-white rounded-lg shadow-lg mt-4 overflow-hidden hover:shadow-2xl transition-shadow duration-300">
-      {isLoading && <Loading />}
-      {post.userId._id === userId && (
-        <span
-          className="absolute top-1 right-4 text-red-500 text-xl cursor-pointer"
-          onClick={() => handleDeletePost(post._id)}
-        >
-          ×
+    <div className="relative bg-gray-800 rounded-lg shadow-lg mt-4 overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+  {isLoading && <Loading />}
+  {post.userId._id === userId && (
+    <span
+      className="absolute top-1 right-4 text-red-500 text-xl cursor-pointer"
+      onClick={() => handleDeletePost(post._id)}
+    >
+      ×
+    </span>
+  )}
+  <div className="p-6">
+    <div className="flex items-center gap-3 mb-4">
+      <Avatar
+        name={post.userId?.name || "Anonymous"}
+        size="40"
+        round={true}
+      />
+      <div className="flex flex-col">
+        <span className="font-semibold text-white">{post.userId?.name}</span>
+        <span className="text-gray-400">
+          {post.createdAt && new Date(post.createdAt).toLocaleString()}
         </span>
-      )}
-      <div className="p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <Avatar
-            name={post.userId?.name || "Anonymous"}
-            size="40"
-            round={true}
-          />
-          <div className="flex flex-col">
-            <span className="font-semibold">{post.userId?.name}</span>
-            <span>
-              {post.createdAt && new Date(post.createdAt).toLocaleString()}
-            </span>
-          </div>
-        </div>
       </div>
-      {post.image && (
-        <div className="w-full my-4    overflow-hidden">
-          <img
-            src={post.image}
-            alt="Post Cover"
-            className=" m-auto object-cover  rounded-md max-h-[400px] transition-transform duration-500"
-          />
-        </div>
-      )}
-      <div className="p-6">
-        <h2 className="text-2xl font-semibold text-blue-600 mb-4">
-          {post.title}
-        </h2>
+    </div>
+  </div>
+  {post.image && (
+    <div className="w-full my-4 overflow-hidden">
+      <img
+        src={post.image}
+        alt="Post Cover"
+        className="m-auto object-cover rounded-md max-h-[400px] transition-transform duration-500"
+      />
+    </div>
+  )}
+  <div className="p-6">
+    <h2 className="text-2xl font-semibold text-indigo-400 mb-4">
+      {post.title}
+    </h2>
 
-        <p className="text-gray-700 text-base mb-4">{post.content}</p>
-        <button
-          className="bg-blue-600 text-white py-2 px-4 m-auto mt-8 rounded-lg text-sm font-semibold hover:bg-blue-700"
-          onClick={() => handleShowComments(post._id)}
-        >
-          {showComments ? "Hide Comments" : "Show Comments"}
-        </button>
-        <div className="mt-5 py-2 flex gap-2 flex-wrap">
-          <input
-            type="text"
-            placeholder="Add comment"
-            className="flex-1"
-            onChange={(e) => setComment(e.target.value)}
-            value={comment}
-          />
-          <button
-            className="bg-blue-600 text-white py-2 rounded-lg px-4"
-            onClick={() => sendMessage(post._id, comment)}
-          >
-            Send
-          </button>
-        </div>
-        {showComments && (
-          <div className="py-4 mt-10">
-            {comments && comments.length > 0 ? (
-              <div className="space-y-4">
-                {comments.map((comment) => (
-                  <div
-                    key={comment._id}
-                    className="flex items-start gap-3 bg-gray-50 p-4 rounded-lg shadow-sm"
-                  >
-                    <Avatar
-                      name={comment.userId?.name || "Anonymous"}
-                      size="40"
-                      round={true}
-                    />
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold text-gray-800">
-                          {comment.userId?.name || "Anonymous"}
-                        </span>
-                        <span className="text-sm text-gray-500">
-                          {new Date(comment.createdAt).toLocaleString()}
-                        </span>
-                      </div>
-                      <p className="text-gray-700 mt-1">{comment.content}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500 text-center">
-                No comments yet. Be the first to comment!
-              </p>
-            )}
-            {totalPages > currentPage && !isLoading && (
+    <p className="text-gray-300 text-base mb-4">{post.content}</p>
+    <button
+      className="bg-indigo-600 text-white py-2 px-4 m-auto mt-8 rounded-lg text-sm font-semibold hover:bg-indigo-700"
+      onClick={() => handleShowComments(post._id)}
+    >
+      {showComments ? "Hide Comments" : "Show Comments"}
+    </button>
+    <div className="mt-5 py-2 flex gap-2 flex-wrap">
+      <input
+        type="text"
+        placeholder="Add comment"
+        className="flex-1 p-2 bg-gray-700 text-white rounded-md"
+        onChange={(e) => setComment(e.target.value)}
+        value={comment}
+      />
+      <button
+        className="bg-indigo-600 text-white py-2 rounded-lg px-4 hover:bg-indigo-700"
+        onClick={() => sendMessage(post._id, comment)}
+      >
+        Send
+      </button>
+    </div>
+    {showComments && (
+      <div className="py-4 mt-10">
+        {comments && comments.length > 0 ? (
+          <div className="space-y-4">
+            {comments.map((comment) => (
               <div
-                className="mt-4 text-center text-blue-500 cursor-pointer hover:underline"
-                onClick={() => handleViewMore()}
+                key={comment._id}
+                className="flex items-start gap-3 bg-gray-700 p-4 rounded-lg shadow-sm"
               >
-                {isLoading ? "Loading..." : "View More"}
+                <Avatar
+                  name={comment.userId?.name || "Anonymous"}
+                  size="40"
+                  round={true}
+                />
+                <div className="flex-1">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-white">
+                      {comment.userId?.name || "Anonymous"}
+                    </span>
+                    <span className="text-sm text-gray-400">
+                      {new Date(comment.createdAt).toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="text-gray-300 mt-1">{comment.content}</p>
+                </div>
               </div>
-            )}
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-center">
+            No comments yet. Be the first to comment!
+          </p>
+        )}
+        {totalPages > currentPage && !isLoading && (
+          <div
+            className="mt-4 text-center text-indigo-500 cursor-pointer hover:underline"
+            onClick={() => handleViewMore()}
+          >
+            {isLoading ? "Loading..." : "View More"}
           </div>
         )}
       </div>
-    </div>
+    )}
+  </div>
+</div>
+
   );
 }

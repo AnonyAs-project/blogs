@@ -91,7 +91,7 @@ export default function Posts() {
   return (
     <>
       <div
-        className="h-[calc(100vh-64px)]  w-full"
+        className="h-[calc(100vh-64px)]  w-full "
         style={{
           backgroundImage:
             "url(https://cdn.pixabay.com/photo/2015/10/02/15/00/diary-968592_640.jpg)",
@@ -100,15 +100,23 @@ export default function Posts() {
         }}
       >
         <div className="absolute top-[64px] left-0 w-full h-[calc(100vh-64px)] bg-black bg-opacity-50"></div>
-        {/* contiune this section and change the ui of the site */}
+        <div className="relative text-center text-[#ffffffb3]  flex flex-col justify-center items-center h-full p-4">
+          <h1 className="text-lg md:text-4xl font-bold mb-4">
+            Welcome to Your Blog
+          </h1>
+          <p className="text-md md:text-lg">
+            Explore stories, ideas, and insights to ignite your imagination and
+            fuel your journey.
+          </p>
+        </div>
       </div>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 p-8">
-        <h1 className="text-4xl font-extrabold text-blue-600 text-center mb-16">
+      <div className="min-h-screen bg-gradient-to-br from-gray-800 to-gray-900 p-8 py-16">
+        <h1 className="text-4xl font-extrabold text-white text-center mb-16">
           Explore Our Posts
         </h1>
         <div className="text-center">
           <button
-            className="bg-blue-600 text-white py-2 px-4 rounded-lg mb-6"
+            className="bg-indigo-600 text-white py-2 px-6 rounded-full shadow-lg transition duration-300 hover:bg-indigo-700"
             onClick={() => setIsModalOpen(true)}
           >
             Add Post
@@ -118,15 +126,16 @@ export default function Posts() {
         <div className="md:w-[60%] m-auto">
           {posts.length > 0 ? (
             posts.map((post) => (
-              <PostsComponent
-                key={post?._id}
-                post={post}
-                getAllPosts={() => getAllPosts(currentPage)}
-                userId={userId}
-              />
+              <div key={post?._id} className="mb-8">
+                <PostsComponent
+                  post={post}
+                  getAllPosts={() => getAllPosts(currentPage)}
+                  userId={userId}
+                />
+              </div>
             ))
           ) : (
-            <p className="text-gray-500 text-center col-span-full">
+            <p className="text-gray-400 text-center col-span-full">
               No posts available.
             </p>
           )}
@@ -136,15 +145,16 @@ export default function Posts() {
             nextLabel="Next >"
             onPageChange={handlePageClick}
             pageCount={totalPages}
-            previousLabel="< Previous"
-            containerClassName="flex justify-between items-center w-full mx-auto mt-6 px-4"
-            pageClassName="cursor-pointer px-3 py-1 border rounded-md"
-            activeClassName="font-bold bg-blue-500 text-white border-blue-500"
-            previousClassName="cursor-pointer px-3 py-1 border rounded-md bg-gray-100"
-            nextClassName="cursor-pointer px-3 py-1 border rounded-md bg-gray-100"
+            previousLabel="< Prev"
+            containerClassName="flex justify-between items-center w-full mx-auto mt-6 px-4 max-w-full overflow-x-auto"
+            pageClassName="cursor-pointer px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm hover:bg-gray-600 transition duration-300"
+            activeClassName="font-bold bg-indigo-500 text-white border-indigo-500"
+            previousClassName="cursor-pointer px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm hover:bg-gray-600 transition duration-300"
+            nextClassName="cursor-pointer px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm hover:bg-gray-600 transition duration-300"
             disabledClassName="opacity-50 cursor-not-allowed"
             pageRangeDisplayed={2}
-            marginPagesDisplayed={2}
+            marginPagesDisplayed={1}
+            breakClassName="cursor-pointer px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md" // styling for the break label
             renderOnZeroPageCount={null}
           />
         </div>
