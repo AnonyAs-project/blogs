@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { API_URL } from "../../config";
@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import { useAuth } from "../context/AuthContext";
 import logo from "../assets/blogsImg.jpg";
+import ImageUpload from "../components/UploadImages";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -13,6 +14,9 @@ export default function Signup() {
     email: "",
     password: "",
   });
+  // const [selectedFile, setSelectedFile] = useState(null);
+  // const [preview, setPreview] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -30,8 +34,16 @@ export default function Signup() {
     e.preventDefault();
     setLoading(true);
 
+    formData.image = imageUrl;
+
     if (!formData.name || !formData.email || !formData.password) {
       toast.error("Please fill in all fields.");
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.image) {
+      toast.error("Please upload the image first.");
       setLoading(false);
       return;
     }
@@ -65,6 +77,34 @@ export default function Signup() {
     }
   };
 
+  // const handleFileInputChange = (e) => {
+  //   const file = e.target.files[0];
+  //   console.log(file);
+  //   if (file) {
+  //     if (!file.type.startsWith("image/")) {
+  //       alert("Please upload a valid image.");
+  //       return;
+  //     }
+  //     if (file.size > 5 * 1024 * 1024) {
+  //       alert("File size exceeds 5MB.");
+  //       return;
+  //     }
+  //   }
+  //   setSelectedFile(file);
+  // };
+
+  // useEffect(() => {
+  //   if (!selectedFile) {
+  //     setPreview(null);
+  //     return;
+  //   }
+
+  //   const objectUrl = URL.createObjectURL(selectedFile);
+  //   setPreview(objectUrl);
+
+  //   return () => URL.revokeObjectURL(objectUrl);
+  // }, [selectedFile]);
+
   return (
     <div className="flex flex-col md:flex-row h-screen bg-gray-100">
       {loading && <Loading />}
@@ -74,14 +114,36 @@ export default function Signup() {
       <div className="flex-1 flex justify-center items-center bg-gray-100 p-6">
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all "
+          className="bg-white p-5 rounded-xl shadow-2xl w-full max-w-md transform transition-all "
         >
-          <h2 className="text-4xl font-extrabold text-center text-blue-700 mb-6">
-          Create Account
+          <h2 className="text-3xl font-extrabold text-center text-blue-700 mb-6">
+            Create Account
           </h2>
-          <p className="text-center text-gray-600 mb-8">
-            Join us and start exploring!
-          </p>
+          <ImageUpload
+            imageUrl={imageUrl}
+            setImageUrl={setImageUrl}
+            loading={loading}
+            setLoading={setLoading}
+          />
+          {/* <div>
+            <input
+              type="file"
+              id="uploadImg"
+              className="hidden"
+              onChange={handleFileInputChange}
+            />
+            <label htmlFor="uploadImg">
+              <img
+                src={
+                  (preview && preview) ||
+                  `https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_640.png`
+                }
+                alt="placeholder img"
+                width={100}
+                className="rounded-full my-2 m-auto cursor-pointer"
+              />
+            </label>
+          </div> */}
 
           <div className="mb-6">
             <label

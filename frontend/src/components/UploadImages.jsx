@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { API_URL } from "../../config";
-import Loading from "../components/Loading"
+import Loading from "../components/Loading";
 
-const ImageUpload = ({ imageUrl, setImageUrl }) => {
+const ImageUpload = ({ imageUrl, setImageUrl, loading, setLoading }) => {
   const token = localStorage.getItem("blogs-token");
 
-  const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
 
   const [error, setError] = useState("");
@@ -14,6 +13,10 @@ const ImageUpload = ({ imageUrl, setImageUrl }) => {
     timestamp: "",
     api_key: "",
   });
+  const [preview, setPreview] = useState(null);
+
+  // display upload progress
+  // contiune .. getting userImage
 
   useEffect(() => {
     const fetchSignature = async () => {
@@ -25,7 +28,7 @@ const ImageUpload = ({ imageUrl, setImageUrl }) => {
           },
         });
         const data = await res.json();
-        
+
         setSignatureData(data);
       } catch (error) {
         console.error("Error fetching signature data", error);
@@ -72,13 +75,12 @@ const ImageUpload = ({ imageUrl, setImageUrl }) => {
       );
 
       const data = await res.json();
-      
 
       if (data.error) {
         setError(data.error.message);
       } else {
         setImageUrl(data.secure_url);
-        setImage(null)
+        setImage(null);
       }
 
       setLoading(false);
@@ -88,17 +90,39 @@ const ImageUpload = ({ imageUrl, setImageUrl }) => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    if (!image) {
+      setPreview(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(image);
+    setPreview(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [image]);
 
   return (
-    <div className="flex flex-col items-center max-w-lg mx-auto p-6 border border-gray-300 rounded-lg bg-gray-50">
-      <h2 className="text-2xl font-semibold mb-4">Post Image</h2>
-
+    <div className="flex flex-col items-center max-w-lg mx-auto p-2 my-2 border border-gray-300 rounded-lg bg-gray-50">
       <input
         type="file"
         onChange={handleFileChange}
         accept="image/*"
         className="mb-4 p-2 border border-gray-300 rounded-md"
+        id="uploadImg"
+        hidden
       />
+      <label htmlFor="uploadImg">
+        <img
+          src={
+            (preview && preview) ||
+            `https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_640.png`
+          }
+          alt="placeholder img"
+          width={100}
+          className="rounded-full my-2 m-auto cursor-pointer"
+        />
+      </label>
 
       {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
 
@@ -114,7 +138,7 @@ const ImageUpload = ({ imageUrl, setImageUrl }) => {
         {loading ? "Uploading..." : "Upload"}
       </button>
 
-      {imageUrl && (
+      {/* {imageUrl && (
         <div className="mt-6 text-center">
           <h4 className="text-lg font-medium">Image Preview:</h4>
           <img
@@ -123,8 +147,8 @@ const ImageUpload = ({ imageUrl, setImageUrl }) => {
             className="mt-4 w-52 h-auto border-2 border-gray-300 rounded-md"
           />
         </div>
-      )}
-      {loading && <Loading />}
+      )} */}
+      
     </div>
   );
 };

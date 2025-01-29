@@ -10,6 +10,6 @@ router.use("/users", userRoutes);
 router.use("/posts", authMiddleware, postRoutes);
 router.use("/comments", authMiddleware, commentRoutes);
 router.use("/notifications", authMiddleware, notificationsRoutes);
-router.use("/generate-signature", authMiddleware, cloudinaryRoutes);
+router.use("/generate-signature", cloudinaryRoutes);
 
 module.exports = router;

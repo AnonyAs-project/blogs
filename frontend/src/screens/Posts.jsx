@@ -5,6 +5,7 @@ import AddPostModal from "../components/AddPostModal";
 import { useNavigate } from "react-router-dom";
 import useSocket from "../services/useSocket";
 import ReactPaginate from "react-paginate";
+import AddFriends from "../components/AddFriends";
 
 export default function Posts() {
   const token = localStorage.getItem("blogs-token");
@@ -90,6 +91,8 @@ export default function Posts() {
 
   return (
     <>
+    {/* continue add friend list with search with indexes...  */}
+    
       <div
         className="h-[calc(100vh-64px)]  w-full "
         style={{
@@ -111,6 +114,7 @@ export default function Posts() {
         </div>
       </div>
       <div className="min-h-screen bg-gradient-to-br from-gray-800 to-gray-900 p-8 py-16">
+      {/* <AddFriends /> */}
         <h1 className="text-4xl font-extrabold text-white text-center mb-16">
           Explore Our Posts
         </h1>
@@ -146,15 +150,15 @@ export default function Posts() {
             onPageChange={handlePageClick}
             pageCount={totalPages}
             previousLabel="< Prev"
-            containerClassName="flex justify-between items-center w-full mx-auto mt-6 px-4 max-w-full overflow-x-auto"
-            pageClassName="cursor-pointer px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm hover:bg-gray-600 transition duration-300"
+            containerClassName="flex justify-between items-center gap-3 w-full mx-auto mt-6 px-4 max-w-full overflow-x-auto"
+            pageClassName="cursor-pointer px-2 md:px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm hover:bg-gray-600 transition duration-300"
             activeClassName="font-bold bg-indigo-500 text-white border-indigo-500"
-            previousClassName="cursor-pointer px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm hover:bg-gray-600 transition duration-300"
-            nextClassName="cursor-pointer px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm hover:bg-gray-600 transition duration-300"
+            previousClassName="min-w-[70px] cursor-pointer px-2 md:px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm hover:bg-gray-600 transition duration-300"
+            nextClassName="min-w-[70px] cursor-pointer px-2 md:px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm hover:bg-gray-600 transition duration-300"
             disabledClassName="opacity-50 cursor-not-allowed"
             pageRangeDisplayed={2}
             marginPagesDisplayed={1}
-            breakClassName="cursor-pointer px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md" // styling for the break label
+            breakClassName="cursor-pointer px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md"
             renderOnZeroPageCount={null}
           />
         </div>
@@ -163,6 +167,7 @@ export default function Posts() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onAddPost={addPost}
+          
         />
       </div>
     </>

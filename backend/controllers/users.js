@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer');
 
 const createUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, image } = req.body;
 
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (!emailRegex.test(email)) {
@@ -20,7 +20,7 @@ const createUser = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword });
+    const user = new User({ name, email, password: hashedPassword, image });
     await user.save();
     // const transporter = nodemailer.createTransport({
     //   service: "gmail",

@@ -1,11 +1,13 @@
 // AddPostModal.js
 import React, { useState } from "react";
 import UploadImage from "../components/UploadImages";
+import Loading from "./Loading";
 
 const AddPostModal = ({ isOpen, onClose, onAddPost }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  
+  const [loading, setLoading] = useState(false);
+
   const [imageUrl, setImageUrl] = useState("");
 
   const handleSubmit = (e) => {
@@ -14,7 +16,7 @@ const AddPostModal = ({ isOpen, onClose, onAddPost }) => {
       onAddPost(title, content, imageUrl);
       setTitle("");
       setContent("");
-      setImageUrl("")
+      setImageUrl("");
       onClose();
     } else {
       alert("Please fill the fields.");
@@ -22,8 +24,6 @@ const AddPostModal = ({ isOpen, onClose, onAddPost }) => {
   };
 
   if (!isOpen) return null;
-
- 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50  flex justify-center items-center z-50">
@@ -34,7 +34,12 @@ const AddPostModal = ({ isOpen, onClose, onAddPost }) => {
         <h2 className="text-2xl font-semibold mb-4 text-center">
           Add New Post
         </h2>
-        <UploadImage imageUrl={imageUrl} setImageUrl={setImageUrl} />
+        <UploadImage
+          imageUrl={imageUrl}
+          setImageUrl={setImageUrl}
+          loading={loading}
+          setLoading={setLoading}
+        />
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
@@ -64,6 +69,7 @@ const AddPostModal = ({ isOpen, onClose, onAddPost }) => {
           Close
         </button>
       </div>
+      {loading && <Loading />}
     </div>
   );
 };
