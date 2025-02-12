@@ -14,6 +14,7 @@ const Navbar = () => {
   const [notifications, setNotifications] = useState([]);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
+
   const fetchNotifications = async () => {
     try {
       const response = await fetch(`${API_URL}/notifications`, {
@@ -35,7 +36,6 @@ const Navbar = () => {
     fetchNotifications();
 
     if (Notification.permission === "default") {
-      console.log(Notification.permission === "default")
       Notification.requestPermission()
         .then((permission) => {
           if (permission === "granted") {

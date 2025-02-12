@@ -6,11 +6,14 @@ import { useNavigate } from "react-router-dom";
 import useSocket from "../services/useSocket";
 import ReactPaginate from "react-paginate";
 import AddFriends from "../components/AddFriends";
+import FriendsTabs from "../components/FriendsTabs";
+import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 
 export default function Posts() {
   const token = localStorage.getItem("blogs-token");
   const [posts, setPosts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showFriendsList, setShowFriendsList] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
@@ -91,8 +94,8 @@ export default function Posts() {
 
   return (
     <>
-    {/* continue add friend list with search with indexes...  */}
-    
+      {/* continue add friend list with search with indexes...  */}
+
       <div
         className="h-[calc(100vh-64px)]  w-full "
         style={{
@@ -114,7 +117,19 @@ export default function Posts() {
         </div>
       </div>
       <div className="min-h-screen bg-gradient-to-br from-gray-800 to-gray-900 p-8 py-16">
-      {/* <AddFriends /> */}
+        <div
+          className="flex justify-center items-center gap-2 text-white cursor-pointer"
+          onClick={() => setShowFriendsList((prev) => !prev)}
+        >
+          
+          Show Friends {showFriendsList ? <FaAngleUp />
+:            <FaAngleDown />}
+
+        </div>
+        {showFriendsList && <FriendsTabs token={token} navigate={navigate}  /> }
+
+        <AddFriends token={token}/>
+        <hr className="mb-8"/>
         <h1 className="text-4xl font-extrabold text-white text-center mb-16">
           Explore Our Posts
         </h1>
@@ -167,7 +182,6 @@ export default function Posts() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onAddPost={addPost}
-          
         />
       </div>
     </>

@@ -1,7 +1,8 @@
 const User = require("../models/user");
+const Friend = require("../models/friend");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const nodemailer = require('nodemailer'); 
+const nodemailer = require("nodemailer");
 
 const createUser = async (req, res) => {
   try {
@@ -20,7 +21,7 @@ const createUser = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword, image });
+    const user = new User({ name, email, password: hashedPassword, image, role: "user" });
     await user.save();
     // const transporter = nodemailer.createTransport({
     //   service: "gmail",
@@ -35,7 +36,7 @@ const createUser = async (req, res) => {
     // // Setup email data
     // const emailData = {
     //   from: process.env.EMAIL, // Sender's email
-    //   to: "princeprincess1222@gmail.com", 
+    //   to: "princeprincess1222@gmail.com",
     //   subject: "Welcome to Our Platform!",
     //   text: `Hello ${name},\n\nWelcome to our platform. Your account has been successfully created.\n\nBest regards,\nTeam`,
     // };
@@ -128,4 +129,61 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { createUser, updateUser, deleteUser, loginUser, getAllUsers };
+const userSearch = async (req, res) => {
+  try {
+    const { searchTerm } = req.query;
+    const userId = req.id;
+
+    if (!searchTerm) {
+      return res.status(400).json({ message: "Please provide a search term" });
+    }
+
+    // Fetch all friend connections (both accepted and pending) in one query
+    const friends = await Friend.find({
+      users: userId,
+      status: { $in: ["pending", "accepted"] },
+    }).select("users");
+
+    // Extract unique friend IDs while excluding the current user
+    const excludedIds = new Set([
+      userId.toString(),
+      ...friends.flatMap((friend) =>
+        friend.users.filter((id) => id.toString() !== userId.toString())
+      ),
+    ]);
+
+    // Search for users excluding friends and pending connections
+    const users = await User.find(
+      {
+        _id: { $nin: Array.from(excludedIds) },
+        $or: [
+          { name: new RegExp(searchTerm, "i") },
+          { email: new RegExp(searchTerm, "i") },
+        ],
+      },
+      "name image role"
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: "No users found matching the search query" });
+    }
+
+    res.status(200).json({ users });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Error searching users" });
+  }
+};
+
+
+
+
+
+module.exports = {
+  createUser,
+  updateUser,
+  deleteUser,
+  loginUser,
+  getAllUsers,
+  userSearch,
+};

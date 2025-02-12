@@ -6,6 +6,8 @@ const cors = require("cors");
 const http = require("http");
 const socketIoMiddleware = require("./middlewares/socket");
 const { Server } = require("socket.io");
+const rateLimit = require("express-rate-limit");
+
 
 const app = express();
 
@@ -46,10 +48,19 @@ io.on("connection", (socket) => {
   });
 });
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 100, 
+  message: "Too many requests from this IP, please try again later.",
+  headers: true, 
+});
 
 
+app.use(limiter);
 app.use("/api", router);
-
+app.use("*", (req, res) => {
+  res.status(404).json({ message: "Page not found" });
+});
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
