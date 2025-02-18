@@ -12,17 +12,21 @@ const sendFriendRequest = async (req, res) => {
     }
 
     if (userId === friendId) {
-      return res.status(400).json({ message: "You cannot add yourself as a friend" });
+      return res
+        .status(400)
+        .json({ message: "You cannot add yourself as a friend" });
     }
 
     // ✅ Sort user IDs
-    const sortedUsers = [userId, friendId].sort(); 
+    const sortedUsers = [userId, friendId];
 
     // ✅ Check if friendship already exists
     const existingRequest = await Friend.findOne({ users: sortedUsers });
 
     if (existingRequest) {
-      return res.status(400).json({ message: "Friend request already sent or accepted" });
+      return res
+        .status(400)
+        .json({ message: "Friend request already sent or accepted" });
     }
 
     // ✅ Save new friend request with sorted users
@@ -31,10 +35,11 @@ const sendFriendRequest = async (req, res) => {
     await friendRequest.save();
     res.status(201).json({ message: "Friend request sent successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
-
 
 const acceptFriendRequest = async (req, res) => {
   try {
@@ -75,7 +80,7 @@ const getFriendRequests = async (req, res) => {
     const userId = req.id;
     const friendRequests = await Friend.find({
       status: "pending",
-      "users.0": userId,
+      "users.1": userId,
     }).populate({
       path: "users",
       select: "name email",
@@ -90,7 +95,6 @@ const getFriendRequests = async (req, res) => {
     });
   }
 };
-
 
 const getFriends = async (req, res) => {
   try {
@@ -112,7 +116,6 @@ const getFriends = async (req, res) => {
       .json({ message: "Internal server error", error: error.message });
   }
 };
-
 
 module.exports = {
   sendFriendRequest,

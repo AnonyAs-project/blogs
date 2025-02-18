@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+   "start": "pm2 start index.js --name blogs-app --watch",
+    "dev": "pm2 start index.js --watch --name blogs-app",
+    "stop": "pm2 stop blogs-app",
+    "restart": "pm2 restart blogs-app",
+    "delete": "pm2 delete blogs-app",
+    "logs": "pm2 logs blogs-app"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +30,7 @@
   },
   "devDependencies": {
     "dotenv": "^16.4.5",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "pm2": "^5.4.3"
   }
 }

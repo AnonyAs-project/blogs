@@ -10,7 +10,6 @@ export default function AddFriends({ token }) {
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  // continue the add friend logic back and front with understanding it ! => its working fine just test it and move on
 
   const timer = useRef(null);
   const controller = useRef(new AbortController());
@@ -68,6 +67,8 @@ export default function AddFriends({ token }) {
       });
 
       const data = await response.json();
+      setSearchTerm("")
+      setFriendsList([]);
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to send friend request");

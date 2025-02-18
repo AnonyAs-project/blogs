@@ -9,7 +9,7 @@ import AddFriends from "../components/AddFriends";
 import FriendsTabs from "../components/FriendsTabs";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 
-export default function Posts() {
+export default function Posts() {  
   const token = localStorage.getItem("blogs-token");
   const [posts, setPosts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,9 +17,9 @@ export default function Posts() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
-
+ 
   const postsPerPage = 2;
-
+  
   const getUserIdFromToken = (token) => {
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
