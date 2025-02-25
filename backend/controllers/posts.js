@@ -4,8 +4,9 @@ const Notification = require("../models/notifications");
 const createPost = async (req, res) => {
   try {
     const userId = req.id;
-
+    console.log(userId)
     const { title, content, image } = req.body;
+    console.log(title)
     const post = new Post({ title, content, userId, image });
     await post.save();
     res.status(201).json({ message: "Post created successfully" });

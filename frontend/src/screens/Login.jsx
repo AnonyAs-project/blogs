@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { API_URL } from "../../config";
@@ -6,8 +6,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Loading from "../components/Loading";
 import logo from "../assets/blogsImg.jpg";
+import GoogleLoginBtn from "../components/GoogleLoginBtn"
 
 export default function Login() {
+  const token = localStorage.getItem("blogs-token")
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -61,6 +63,11 @@ export default function Login() {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    if(token){
+      navigate("/")
+    }
+  }, [])
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-gray-100">
@@ -130,7 +137,7 @@ export default function Login() {
           >
             {loading ? "Logging in..." : "Login"}
           </button>
-
+          <GoogleLoginBtn />
           <p className="mt-6 text-center text-gray-700">
             Don't have an account?{" "}
             <Link

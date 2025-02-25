@@ -26,7 +26,7 @@ const FriendsTabs = ({ token, navigate }) => {
         throw new Error(data.message || "Failed to send friend request");
       }
 
-      console.log(data);
+      
       getFriends()
       getFriendsRequests()
     } catch (error) {
@@ -55,7 +55,7 @@ const FriendsTabs = ({ token, navigate }) => {
       if (!response.ok) {
         throw new Error(data.message);
       }
-      console.log(data)
+      
       setFriends(data);
     } catch (err) {
       console.error("Failed to fetch friends:", err);
@@ -82,7 +82,7 @@ const FriendsTabs = ({ token, navigate }) => {
       if (!response.ok) {
         throw new Error(data.message);
       }
-      console.log(data)
+      
       setFriendRequests(data);
     } catch (err) {
       console.error("Failed to fetch friends:", err);

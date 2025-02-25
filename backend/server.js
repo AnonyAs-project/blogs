@@ -1,23 +1,16 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const router = require("./routers/index");
-const cors = require("cors");
+// server.js
 const http = require("http");
-const socketIoMiddleware = require("./middlewares/socket");
 const { Server } = require("socket.io");
-const rateLimit = require("express-rate-limit");
+const app = require("./app");
 const logger = require("./config/logger");
-const passport = require("passport"); 
-require("./config/passport");
+const jwt = require("jsonwebtoken");
 
-// Log app start
-logger.info("App started");
-logger.warn("This is a warning");
-
-const app = express();
 const server = http.createServer(app);
 
+
+console.log("server is working")
+
+// Socket.IO configuration
 const io = new Server(server, {
   cors: {
     origin: "*",
@@ -25,6 +18,9 @@ const io = new Server(server, {
   },
 });
 
+console.log("server is working")
+
+// Socket.IO authentication middleware
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
   if (!token) {
@@ -39,9 +35,9 @@ io.use((socket, next) => {
   }
 });
 
+// Import your custom socket middleware if you have one
+const socketIoMiddleware = require("./middlewares/socket");
 app.use(socketIoMiddleware(io));
-app.use(express.json());
-app.use(cors());
 
 io.on("connection", (socket) => {
   logger.info(`Socket ${socket.id} connected. Initial rooms: ${Array.from(socket.rooms)}`);
@@ -65,32 +61,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: "Too many requests from this IP, please try again later.",
-  headers: true,
-});
-
-
-app.use(limiter);
-app.use(passport.initialize());
-app.use("/api", router);
-app.use("*", (req, res) => {
-  res.status(404).json({ message: "Page not found" });
-});
-
-// Database connection
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    logger.info("Connected successfully to database");
-  })
-  .catch((err) => {
-    logger.error("Error connecting to database", { error: err.message });
-  });
-
-// Start server
+// Start the server
 server.listen(process.env.PORT || 3000, () => {
   logger.info(`Server listening on port ${process.env.PORT || 3000}`);
 });
