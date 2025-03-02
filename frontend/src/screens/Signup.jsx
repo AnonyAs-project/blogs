@@ -42,11 +42,11 @@ export default function Signup() {
       return;
     }
 
-    if (!formData.image) {
-      toast.error("Please upload the image first.");
-      setLoading(false);
-      return;
-    }
+    // if (!formData.image) {
+    //   toast.error("Please upload the image first.");
+    //   setLoading(false);
+    //   return;
+    // }
 
     try {
       const response = await fetch(`${API_URL}/users/signup`, {

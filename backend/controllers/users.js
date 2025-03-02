@@ -4,6 +4,18 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
+
+// Nodemailer configuration
+const transport = nodemailer.createTransport({
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
+  auth: {
+    user: "25bed6a3c8634e",
+    pass: "e9a0c129034e01"
+  }
+});
+
+
 const createUser = async (req, res) => {
   try {
     const { name, email, password, image } = req.body;
@@ -23,36 +35,19 @@ const createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ name, email, password: hashedPassword, image, role: "user" });
     await user.save();
-    // const transporter = nodemailer.createTransport({
-    //   service: "gmail",
-    //   auth: {
-    //     user: process.env.EMAIL,
-    //     pass: process.env.EMAIL_PASSWORD,
-    //   },
-    //   tls: {
-    //     rejectUnauthorized: false, // Can help if there are issues with SSL certificates
-    //   },
-    // });
-    // // Setup email data
-    // const emailData = {
-    //   from: process.env.EMAIL, // Sender's email
-    //   to: "princeprincess1222@gmail.com",
-    //   subject: "Welcome to Our Platform!",
-    //   text: `Hello ${name},\n\nWelcome to our platform. Your account has been successfully created.\n\nBest regards,\nTeam`,
-    // };
-
-    // // Send the email
-    // transporter.sendMail(emailData, (error, info) => {
-    //   if (error) {
-    //     console.error("Error sending email:", error);
-    //   } else {
-    //     console.log("Email sent successfully:", info.response);
-    //   }
-    // });
 
     const token = jwt.sign({ id: user._id }, process.env.SECRET);
+
+    // Send welcome email
+    // await transport.sendMail({
+    //   from: '"Your Blog" <no-reply@t67073957@gmail.com>', // Sender address
+    //   to: email,
+    //   subject: "Welcome to Our Blog!", // Subject
+    //   html: `<h2>Hello, ${name}!</h2><p>Welcome to our blog. We're excited to have you here!</p>`, // HTML body
+    // });
+
     res.status(201).json({
-      message: "User created successfully",
+      message: "User created successfully, welcome email sent",
       token,
     });
   } catch (e) {

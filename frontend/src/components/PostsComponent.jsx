@@ -130,7 +130,7 @@ export default function PostsComponent({ post, getAllPosts, userId }) {
       getPostComments(post._id);
     }
   }, [currentPage]);
-
+ 
   return (
     <div className="relative bg-gray-800 rounded-lg shadow-lg mt-4 overflow-hidden hover:shadow-2xl transition-shadow duration-300">
       {isLoading && <Loading />}

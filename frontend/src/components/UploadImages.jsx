@@ -127,6 +127,7 @@ const ImageUpload = ({ imageUrl, setImageUrl, loading, setLoading }) => {
       {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
 
       <button
+        type="button"
         onClick={handleUpload}
         disabled={loading || !image}
         className={`px-4 py-2 text-white font-semibold rounded-md focus:outline-none transition-all ${
@@ -148,7 +149,6 @@ const ImageUpload = ({ imageUrl, setImageUrl, loading, setLoading }) => {
           />
         </div>
       )} */}
-      
     </div>
   );
 };

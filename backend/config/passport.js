@@ -13,14 +13,17 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+
         // Find user by email or create a new one
         let user = await User.findOne({ email: profile.emails[0].value });
+        
         if (!user) {
           user = new User({
             googleId: profile.id,
             name: profile.displayName,
             email: profile.emails[0].value,
             image: profile.photos[0].value,
+            role: "user",
             password: "", // Google users do not require a password
           });
           await user.save();

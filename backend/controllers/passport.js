@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-
-// serach for is it right for a user join by google to save in db .. and try to sign with another acc and see the db ..
+// see the problem of no userId when creating post with user joined by google 
 const googleCallback = (req, res) => {
   if (!req.user) {
     return res.status(401).json({ message: "Authentication failed" });

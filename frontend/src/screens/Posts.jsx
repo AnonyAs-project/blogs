@@ -78,7 +78,7 @@ export default function Posts() {
       if (!response.ok) {
         throw new Error(data.message);
       }
-      getAllPosts();
+      getAllPosts(currentPage);
     } catch (err) {
       console.error("Failed to add post:", err);
     }
@@ -91,15 +91,13 @@ export default function Posts() {
   };
 
   useEffect(() => {
-    if (token) {
       getAllPosts(currentPage);
-    }
+    
   }, []);
+
 
   return (
     <>
-      {/* continue add friend list with search with indexes...  */}
-
       <div
         className="h-[calc(100vh-64px)]  w-full "
         style={{
