@@ -12,6 +12,8 @@ const passport = require("passport");
 require("./config/passport");
 // require("./config/cron")
 
+// handle errors in a good way in front end to show relevant messages .. and backend if needed
+
 // Log app start
 logger.info("App started");
 logger.warn("This is a warning");
@@ -83,7 +85,7 @@ app.use("*", (req, res) => {
 
 // Database connection
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI_PORD)
   .then(() => {
     logger.info("Connected successfully to database");
   })
