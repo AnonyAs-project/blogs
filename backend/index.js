@@ -10,6 +10,7 @@ const rateLimit = require("express-rate-limit");
 const logger = require("./config/logger");
 const passport = require("passport"); 
 require("./config/passport");
+// require("./config/cron")
 
 // Log app start
 logger.info("App started");

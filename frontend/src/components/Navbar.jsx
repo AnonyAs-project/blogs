@@ -109,6 +109,8 @@ const Navbar = () => {
     }
   };
 
+  console.log(notifications)
+
   // the problem of when refresh the current user stay and the other closes ..
   const notificationsCount = notifications?.filter((e) => !e.read).length;
   return (
