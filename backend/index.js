@@ -13,6 +13,8 @@ require("./config/passport");
 // require("./config/cron")
 
 // handle errors in a good way in front end to show relevant messages .. and backend if needed
+// try vercel on full stack
+// join github with princeprincess acc .. and deploy with vercel the current project
 
 // Log app start
 logger.info("App started");
@@ -85,7 +87,7 @@ app.use("*", (req, res) => {
 
 // Database connection
 mongoose
-  .connect(process.env.MONGO_URI_PORD)
+  .connect(process.env.MONGO_URI)
   .then(() => {
     logger.info("Connected successfully to database");
   })
